@@ -1,0 +1,64 @@
+version: "3.7"
+
+networks:
+  public_network:
+    driver: overlay
+    external: true
+
+services:
+  traefik:
+    image: traefik:v2.2.8
+    volumes:
+      - "/volumes/traefik/letsencrypt:/letsencrypt"
+      - "/volumes/traefik/traefik.toml:/etc/traefik/traefik.toml"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    networks:
+      - public_network
+    ports:
+      - target: 80
+        published: 80
+        protocol: tcp
+        mode: host
+      - target: 443
+        published: 443
+        protocol: tcp
+        mode: host
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.role == manager
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=public_network"
+        - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+        #
+        - "traefik.http.routers.api.rule=Host(`traefik.thedogpaws.com`)"
+        - "traefik.http.routers.api.entrypoints=web"
+        - "traefik.http.routers.api.middlewares=redirect-to-https"
+        # 
+        - "traefik.http.services.dummy-svc.loadbalancer.server.port=8080"
+        # 
+        - "traefik.http.routers.api-secured.rule=Host(`traefik.thedogpaws.com`)"
+        - "traefik.http.routers.api-secured.entrypoints=websecured"
+        - "traefik.http.routers.api-secured.service=api@internal"
+        - "traefik.http.routers.api-secured.tls=true"
+        - "traefik.http.routers.api-secured.tls.certresolver=mytlschallenge"
+        # 
+        - "traefik.http.routers.api-secured.middlewares=auth"
+        - "traefik.http.middlewares.auth.basicauth.users=deployer:$$apr1$$aq9QxmNl$$oHp76FRNe4Z0WWR67oKHQ1"
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: any
+
+  system-prune:
+    image: docker
+    command: docker system prune --all --force
+    deploy:
+      mode: global
+      labels:
+        - "traefik.enable=false"
+      restart_policy:
+        delay: 24h

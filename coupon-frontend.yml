@@ -1,0 +1,60 @@
+version: "3.7"
+
+networks:
+  public_network:
+    driver: overlay
+    external: true
+
+services:
+  frontend:
+    image: tanngoc93/com.thedogpaws:latest
+    command: bash -c "passenger start"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    environment:
+      PREFIX: "/coupons"
+      SITE_NAME: "TheDogPaws.com"
+      SITE_LOGO: "//tdpaws.b-cdn.net/wp-content/uploads/2020/04/TheDogPawsLogo.jpg"
+      SITE_FAVICON: "//tdpaws.b-cdn.net/wp-content/uploads/2020/04/cropped-TheDogPaws-32x32.png"
+      SITE_FEATURE_IMAGE: "//tdpaws.b-cdn.net/wp-content/uploads/2020/04/TheDogPawsLogo.jpg"
+      COUPON_PAGE_TITLE: "Verified Coupons"
+      COUPON_PAGE_DESCRIPTION: "TheDogPaws.com aims to be one of the only dedicated dog news sources (news about dogs–not necessarily for dogs). This includes dogs in the media, news-worthy events, product recalls, celebrity dogs, and anything else in the news that involves dogs[...]"
+      COUPON_API: "https://coupon.thedogpaws.com/api/v1"
+      BLOG_API: ""
+    networks:
+      - public_network
+    depends_on:
+      - backend
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 768M
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+      mode: replicated
+      replicas: 1
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=public_network"
+        - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+        - "traefik.http.middlewares.service-stripprefix.stripprefix.prefixes=/coupons"
+        #
+        - "traefik.http.routers.frontend.rule=Host(`thedogpaws.com`) && PathPrefix(`/coupons`)"
+        - "traefik.http.routers.frontend.entrypoints=web"
+        - "traefik.http.routers.frontend.middlewares=redirect-to-https"
+        - "traefik.http.routers.frontend.middlewares=service-stripprefix@docker"
+        # 
+        - "traefik.http.services.frontend-svc.loadbalancer.server.port=80"
+        # 
+        - "traefik.http.routers.frontend-secured.rule=Host(`thedogpaws.com`) && PathPrefix(`/coupons`)"
+        - "traefik.http.routers.frontend-secured.entrypoints=websecured"
+        - "traefik.http.routers.frontend-secured.tls=true"
+        - "traefik.http.routers.frontend-secured.tls.certresolver=mytlschallenge"
+        - "traefik.http.routers.frontend-secured.middlewares=service-stripprefix@docker"
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: any

@@ -1,0 +1,38 @@
+version: "3.7"
+
+networks:
+  public_network:
+    driver: overlay
+    external: true
+
+services:
+  adminer:
+    image: adminer
+    networks:
+      - public_network
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=public_network"
+        - "traefik.http.middlewares.service-redirectscheme.redirectscheme.scheme=https"
+        # 
+        - "traefik.http.routers.adminer.rule=Host(`adminer.thedogpaws.com`)"
+        - "traefik.http.routers.adminer.entrypoints=web"
+        - "traefik.http.routers.adminer.middlewares=service-redirectscheme"
+        # 
+        - "traefik.http.services.adminer-svc.loadbalancer.server.port=8080"
+        # 
+        - "traefik.http.routers.adminer-secured.rule=Host(`adminer.thedogpaws.com`)"
+        - "traefik.http.routers.adminer-secured.entrypoints=websecured"
+        - "traefik.http.routers.adminer-secured.tls=true"
+        - "traefik.http.routers.adminer-secured.tls.certresolver=mytlschallenge"
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: any
