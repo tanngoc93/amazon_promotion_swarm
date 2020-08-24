@@ -12,15 +12,15 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
     environment:
-      PREFIX: "/coupons"
-      SITE_NAME: "TheDogPaws.com"
-      SITE_LOGO: "//tdpaws.b-cdn.net/wp-content/uploads/2020/04/TheDogPawsLogo.jpg"
-      SITE_FAVICON: "//tdpaws.b-cdn.net/wp-content/uploads/2020/04/cropped-TheDogPaws-32x32.png"
-      SITE_FEATURE_IMAGE: "//tdpaws.b-cdn.net/wp-content/uploads/2020/04/TheDogPawsLogo.jpg"
-      COUPON_PAGE_TITLE: "Verified Coupons"
-      COUPON_PAGE_DESCRIPTION: "TheDogPaws.com aims to be one of the only dedicated dog news sources (news about dogs–not necessarily for dogs). This includes dogs in the media, news-worthy events, product recalls, celebrity dogs, and anything else in the news that involves dogs[...]"
-      COUPON_API: "https://coupon.thedogpaws.com/api/v1"
-      BLOG_API: ""
+      PREFIX: "${PREFIX}"
+      SITE_NAME: "${SITE_NAME}"
+      SITE_LOGO: "${SITE_LOGO}"
+      SITE_FAVICON: "${SITE_FAVICON}"
+      SITE_FEATURE_IMAGE: "${SITE_FEATURE_IMAGE}"
+      COUPON_PAGE_DESCRIPTION: "${COUPON_PAGE_DESCRIPTION}"
+      COUPON_PAGE_TITLE: "${COUPON_PAGE_TITLE}"
+      COUPON_API: "${COUPON_API}"
+      BLOG_API: "${BLOG_API}"
     networks:
       - public_network
     depends_on:
@@ -28,10 +28,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '1'
-          memory: 768M
+          memory: 1024M
         reservations:
-          cpus: '0.5'
           memory: 512M
       mode: replicated
       replicas: 1
