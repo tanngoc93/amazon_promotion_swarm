@@ -39,14 +39,14 @@ services:
         - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
         - "traefik.http.middlewares.service-stripprefix.stripprefix.prefixes=/coupons"
         #
-        - "traefik.http.routers.frontend.rule=Host(`thedogpaws.com`) && PathPrefix(`/coupons`)"
+        - "traefik.http.routers.frontend.rule=Host(`${DOMAIN}`) && PathPrefix(`/coupons`)"
         - "traefik.http.routers.frontend.entrypoints=web"
         - "traefik.http.routers.frontend.middlewares=redirect-to-https"
         - "traefik.http.routers.frontend.middlewares=service-stripprefix@docker"
         # 
         - "traefik.http.services.frontend-svc.loadbalancer.server.port=80"
         # 
-        - "traefik.http.routers.frontend-secured.rule=Host(`thedogpaws.com`) && PathPrefix(`/coupons`)"
+        - "traefik.http.routers.frontend-secured.rule=Host(`${DOMAIN}`) && PathPrefix(`/coupons`)"
         - "traefik.http.routers.frontend-secured.entrypoints=websecured"
         - "traefik.http.routers.frontend-secured.tls=true"
         - "traefik.http.routers.frontend-secured.tls.certresolver=mytlschallenge"

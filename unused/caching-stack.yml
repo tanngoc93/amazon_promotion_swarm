@@ -28,13 +28,13 @@ services:
         # 
         - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
         #
-        - "traefik.http.routers.varnish.rule=Host(`thedogpaws.com`, `www.thedogpaws.com`)"
+        - "traefik.http.routers.varnish.rule=Host(`${DOMAIN}`, `www.${DOMAIN}`)"
         - "traefik.http.routers.varnish.entrypoints=web"
         - "traefik.http.routers.varnish.middlewares=redirect-to-https"
         # 
         - "traefik.http.services.varnish-svc.loadbalancer.server.port=80"
         # 
-        - "traefik.http.routers.varnish-secured.rule=Host(`thedogpaws.com`)"
+        - "traefik.http.routers.varnish-secured.rule=Host(`${DOMAIN}`)"
         - "traefik.http.routers.varnish-secured.entrypoints=websecured"
         - "traefik.http.routers.varnish-secured.tls=true"
         - "traefik.http.routers.varnish-secured.tls.certresolver=mytlschallenge"

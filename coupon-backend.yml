@@ -45,13 +45,13 @@ services:
         - "traefik.docker.network=public_network"
         - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
         #
-        - "traefik.http.routers.backend.rule=Host(`coupon.thedogpaws.com`)"
+        - "traefik.http.routers.backend.rule=Host(`coupon.${DOMAIN}`)"
         - "traefik.http.routers.backend.entrypoints=web"
         - "traefik.http.routers.backend.middlewares=redirect-to-https"
         # 
         - "traefik.http.services.backend-svc.loadbalancer.server.port=80"
         # 
-        - "traefik.http.routers.backend-secured.rule=Host(`coupon.thedogpaws.com`)"
+        - "traefik.http.routers.backend-secured.rule=Host(`coupon.${DOMAIN}`)"
         - "traefik.http.routers.backend-secured.entrypoints=websecured"
         - "traefik.http.routers.backend-secured.tls=true"
         - "traefik.http.routers.backend-secured.tls.certresolver=mytlschallenge"
