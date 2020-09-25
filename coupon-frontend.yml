@@ -37,20 +37,20 @@ services:
         - "traefik.enable=true"
         - "traefik.docker.network=public_network"
         - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
-        - "traefik.http.middlewares.service-stripprefix.stripprefix.prefixes=/coupons"
+        - "traefik.http.middlewares.stripprefix-middleware.stripprefix.prefixes=/coupons"
         #
-        - "traefik.http.routers.frontend.rule=Host(`${DOMAIN}`) && PathPrefix(`/coupons`)"
-        - "traefik.http.routers.frontend.entrypoints=web"
-        - "traefik.http.routers.frontend.middlewares=redirect-to-https"
-        - "traefik.http.routers.frontend.middlewares=service-stripprefix@docker"
+        - "traefik.http.routers.frontend-http.rule=Host(`${DOMAIN}`) && PathPrefix(`/coupons`)"
+        - "traefik.http.routers.frontend-http.entrypoints=web"
+        - "traefik.http.routers.frontend-http.middlewares=redirect-to-https"
+        - "traefik.http.routers.frontend-http.middlewares=stripprefix-middleware@docker"
         # 
         - "traefik.http.services.frontend-svc.loadbalancer.server.port=80"
         # 
-        - "traefik.http.routers.frontend-secured.rule=Host(`${DOMAIN}`) && PathPrefix(`/coupons`)"
-        - "traefik.http.routers.frontend-secured.entrypoints=websecured"
-        - "traefik.http.routers.frontend-secured.tls=true"
-        - "traefik.http.routers.frontend-secured.tls.certresolver=mytlschallenge"
-        - "traefik.http.routers.frontend-secured.middlewares=service-stripprefix@docker"
+        - "traefik.http.routers.frontend-https.rule=Host(`${DOMAIN}`) && PathPrefix(`/coupons`)"
+        - "traefik.http.routers.frontend-https.entrypoints=websecured"
+        - "traefik.http.routers.frontend-https.tls=true"
+        - "traefik.http.routers.frontend-https.tls.certresolver=mytlschallenge"
+        - "traefik.http.routers.frontend-https.middlewares=stripprefix-middleware@docker"
       update_config:
         parallelism: 1
         delay: 10s

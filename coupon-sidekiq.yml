@@ -19,6 +19,7 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
     environment:
+      DB_POOL: "${RAILS_DB_POOL}"
       DB_PORT: "${RAILS_DB_PORT}"
       DB_HOST: "${RAILS_DB_HOST}"
       DB_USER: "${RAILS_DB_USER}"

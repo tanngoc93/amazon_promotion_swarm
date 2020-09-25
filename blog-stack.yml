@@ -33,19 +33,18 @@ services:
       labels:
         - "traefik.enable=true"
         - "traefik.docker.network=public_network"
-        # 
         - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
-        #
-        - "traefik.http.routers.wordpress.rule=Host(`${DOMAIN}`, `www.${DOMAIN}`)"
-        - "traefik.http.routers.wordpress.entrypoints=web"
-        - "traefik.http.routers.wordpress.middlewares=redirect-to-https"
+        # 
+        - "traefik.http.routers.wordpress-http.rule=Host(`${DOMAIN}`, `www.${DOMAIN}`)"
+        - "traefik.http.routers.wordpress-http.entrypoints=web"
+        - "traefik.http.routers.wordpress-http.middlewares=redirect-to-https"
         # 
         - "traefik.http.services.wordpress-svc.loadbalancer.server.port=80"
         # 
-        - "traefik.http.routers.wordpress-secured.rule=Host(`${DOMAIN}`)"
-        - "traefik.http.routers.wordpress-secured.entrypoints=websecured"
-        - "traefik.http.routers.wordpress-secured.tls=true"
-        - "traefik.http.routers.wordpress-secured.tls.certresolver=mytlschallenge"
+        - "traefik.http.routers.wordpress-https.rule=Host(`${DOMAIN}`)"
+        - "traefik.http.routers.wordpress-https.entrypoints=websecured"
+        - "traefik.http.routers.wordpress-https.tls=true"
+        - "traefik.http.routers.wordpress-https.tls.certresolver=mytlschallenge"
       update_config:
         parallelism: 1
         delay: 10s
