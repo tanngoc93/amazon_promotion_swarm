@@ -41,7 +41,7 @@ services:
         #
         - "traefik.http.routers.frontend-http.rule=Host(`${DOMAIN}`) && PathPrefix(`/coupons`)"
         - "traefik.http.routers.frontend-http.entrypoints=web"
-        - "traefik.http.routers.frontend-http.middlewares=redirect-to-https"
+        - "traefik.http.routers.frontend-http.middlewares=redirect-to-https@docker"
         - "traefik.http.routers.frontend-http.middlewares=stripprefix-middleware@docker"
         # 
         - "traefik.http.services.frontend-svc.loadbalancer.server.port=80"

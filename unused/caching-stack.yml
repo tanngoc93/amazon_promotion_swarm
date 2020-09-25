@@ -29,7 +29,7 @@ services:
         #
         - "traefik.http.routers.varnish-http.rule=Host(`${DOMAIN}`, `www.${DOMAIN}`)"
         - "traefik.http.routers.varnish-http.entrypoints=web"
-        - "traefik.http.routers.varnish-http.middlewares=redirect-to-https"
+        - "traefik.http.routers.varnish-http.middlewares=redirect-to-https@docker"
         # 
         - "traefik.http.services.varnish-svc.loadbalancer.server.port=80"
         # 

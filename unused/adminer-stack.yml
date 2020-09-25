@@ -23,7 +23,7 @@ services:
         # 
         - "traefik.http.routers.adminer-http.rule=Host(`adminer.${DOMAIN}`)"
         - "traefik.http.routers.adminer-http.entrypoints=web"
-        - "traefik.http.routers.adminer-http.middlewares=redirect-to-https"
+        - "traefik.http.routers.adminer-http.middlewares=redirect-to-https@docker"
         # 
         - "traefik.http.services.adminer-svc.loadbalancer.server.port=8080"
         # 
