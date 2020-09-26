@@ -19,7 +19,7 @@ import std;
 
 backend default {
   .port = "80";
-  .host = "wordpress";
+  .host = "IP address"; # eg: "127.0.0.1"
   .first_byte_timeout = 60s;
   .connect_timeout = 300s;
 }
@@ -27,7 +27,7 @@ backend default {
 # SET THE ALLOWED IP OF PURGE REQUESTS
 # ##########################################################
 acl purge {
-  "127.0.0.1";
+  "IP address"; # eg: "127.0.0.1"
 }
 
 #THE RECV FUNCTION
