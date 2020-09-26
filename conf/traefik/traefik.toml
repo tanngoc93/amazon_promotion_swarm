@@ -1,0 +1,71 @@
+################################################################
+#
+# Configuration sample for Traefik v2.
+# Read more: https://raw.githubusercontent.com/containous/traefik/master/traefik.sample.toml
+#
+################################################################
+
+################################################################
+# Global configuration
+################################################################
+[global]
+  checkNewVersion = true
+  sendAnonymousUsage = true
+
+################################################################
+# Entrypoints configuration
+################################################################
+
+# Entrypoints definition
+[entryPoints]
+  [entryPoints.web]
+    address = ":80"
+  [entryPoints.websecured]
+    address = ":443"
+
+[certificatesResolvers.mytlschallenge.acme]
+  email    = "tanngoc93@gmail.com"
+  caServer = "https://acme-v02.api.letsencrypt.org/directory"
+  storage  = "/letsencrypt/acme.json"
+  [certificatesResolvers.mytlschallenge.acme.httpChallenge]
+    entryPoint = "web"
+
+# Redirect to https
+[http.middlewares]
+  [http.middlewares.https-redirect.redirectscheme]
+    scheme = "https"
+    permanent = true
+    port = 443
+
+################################################################
+# Traefik logs configuration
+################################################################
+
+# Enabled by default and log to stdout
+[log]
+  level = "DEBUG"
+
+################################################################
+# Access logs configuration
+################################################################
+
+# Enable access logs
+[accessLog]
+
+################################################################
+# API and dashboard configuration
+################################################################
+
+# Enable API and dashboard
+[api]
+  dashboard = true
+
+################################################################
+# Docker configuration backend
+################################################################
+
+# Enable Docker configuration backend
+[providers.docker]
+  swarmMode = true
+  exposedByDefault = false
+  endpoint = "unix:///var/run/docker.sock"
