@@ -11,7 +11,7 @@ eg: docker stack deploy --with-registry-auth -c blog-stack.yml blog_
 ```
 
 ```html
-Noted: blog_ is a unique PREFIX
+Noted: blog_ is a unique PREFIX, and set by you
 ```
 
 ### Show all of stacks
