@@ -1,6 +1,6 @@
 ## Docker Swarm Management for TheDogPaws.com
 
-### Deploy a STACK
+### Deploy a stack
 
 ```
 docker stack deploy [OPTIONS] STACK
