@@ -1,17 +1,17 @@
 ## Docker Swarm Management for TheDogPaws.com
 
-### Deploy
+### Deploy a STACK
 
 ```
 docker stack deploy [OPTIONS] STACK
 ``` 
 
 ```
-eg: docker stack deploy --with-registry-auth -c blog-stack.yml blog_
+eg: docker stack deploy --with-registry-auth -c proxy-stack.yml blog_
 ```
 
-```html
-Noted: blog_ is a unique PREFIX, and set by you
+```
+noted: blog_ is a unique PREFIX, and set by you
 ```
 
 ### Show all of stacks
