@@ -1,7 +1,5 @@
 version: "3.8"
 
-# 172.96.187.246
-
 networks:
   public_network:
     driver: overlay
