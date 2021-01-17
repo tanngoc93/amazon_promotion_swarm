@@ -1,5 +1,7 @@
 version: "3.8"
 
+# 172.96.187.246
+
 networks:
   public_network:
     driver: overlay
@@ -7,11 +9,11 @@ networks:
 
 services:
   traefik:
-    image: traefik:v2.3.0
+    image: traefik:v2.3.7
     volumes:
       - "/volumes/traefik/letsencrypt:/letsencrypt"
       - "/volumes/traefik/traefik.toml:/etc/traefik/traefik.toml"
-      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
     networks:
       - public_network
     ports:
@@ -23,6 +25,12 @@ services:
         published: 443
         protocol: tcp
         mode: host
+    environment:
+      - "EMAIL=${EMAIL}"
+      - "PILOT_TOKEN=${PILOT_TOKEN}"
+      - "CF_API_EMAIL=${CF_API_EMAIL}"
+      - "CF_API_KEY=${CF_API_KEY}"
+      - "PROVIDER=${PROVIDER}"
     deploy:
       mode: global
       placement:
@@ -33,18 +41,18 @@ services:
         - "traefik.docker.network=public_network"
         - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
         #
-        - "traefik.http.routers.proxy-http.rule=Host(`traefik.${DOMAIN}`)"
-        - "traefik.http.routers.proxy-http.entrypoints=web"
-        - "traefik.http.routers.proxy-http.middlewares=redirect-to-https@docker"
+        - "traefik.http.routers.proxy.rule=Host(`traefik.${DOMAIN}`)"
+        - "traefik.http.routers.proxy.entrypoints=web"
+        - "traefik.http.routers.proxy.middlewares=redirect-to-https@docker"
         # 
         - "traefik.http.services.proxy-svc.loadbalancer.server.port=8080"
         # 
-        - "traefik.http.routers.proxy-https.rule=Host(`traefik.${DOMAIN}`)"
-        - "traefik.http.routers.proxy-https.entrypoints=websecured"
-        - "traefik.http.routers.proxy-https.service=api@internal"
-        - "traefik.http.routers.proxy-https.tls=true"
-        - "traefik.http.routers.proxy-https.tls.certresolver=mytlschallenge"
-        # 
+        - "traefik.http.routers.proxy-secured.rule=Host(`traefik.${DOMAIN}`)"
+        - "traefik.http.routers.proxy-secured.entrypoints=websecured"
+        - "traefik.http.routers.proxy-secured.service=api@internal"
+        - "traefik.http.routers.proxy-secured.tls=true"
+        - "traefik.http.routers.proxy-secured.tls.certresolver=mydnschallenge"
+        #
         - "traefik.http.routers.proxy-https.middlewares=auth"
         - "traefik.http.middlewares.auth.basicauth.users=deployer:$$apr1$$aq9QxmNl$$oHp76FRNe4Z0WWR67oKHQ1"
       update_config:

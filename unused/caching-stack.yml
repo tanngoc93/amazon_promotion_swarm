@@ -27,16 +27,16 @@ services:
         - "traefik.docker.network=public_network"
         - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
         #
-        - "traefik.http.routers.varnish-http.rule=Host(`${DOMAIN}`, `www.${DOMAIN}`)"
-        - "traefik.http.routers.varnish-http.entrypoints=web"
-        - "traefik.http.routers.varnish-http.middlewares=redirect-to-https@docker"
+        - "traefik.http.routers.varnish.rule=Host(`${DOMAIN}`, `www.${DOMAIN}`)"
+        - "traefik.http.routers.varnish.entrypoints=web"
+        - "traefik.http.routers.varnish.middlewares=redirect-to-https@docker"
         # 
         - "traefik.http.services.varnish-svc.loadbalancer.server.port=80"
         # 
-        - "traefik.http.routers.varnish-https.rule=Host(`${DOMAIN}`)"
-        - "traefik.http.routers.varnish-https.entrypoints=websecured"
-        - "traefik.http.routers.varnish-https.tls=true"
-        - "traefik.http.routers.varnish-https.tls.certresolver=mytlschallenge"
+        - "traefik.http.routers.varnish-secured.rule=Host(`${DOMAIN}`)"
+        - "traefik.http.routers.varnish-secured.entrypoints=websecured"
+        - "traefik.http.routers.varnish-secured.tls=true"
+        - "traefik.http.routers.varnish-secured.tls.certresolver=mydnschallenge"
       update_config:
         parallelism: 1
         delay: 10s

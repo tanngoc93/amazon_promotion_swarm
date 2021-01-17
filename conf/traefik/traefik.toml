@@ -20,22 +20,16 @@
 [entryPoints]
   [entryPoints.web]
     address = ":80"
+
   [entryPoints.websecured]
     address = ":443"
 
-[certificatesResolvers.mytlschallenge.acme]
-  email    = "tanngoc93@gmail.com"
-  caServer = "https://acme-v02.api.letsencrypt.org/directory"
+[certificatesResolvers.mydnschallenge.acme]
+  email    = "${EMAIL}"
   storage  = "/letsencrypt/acme.json"
-  [certificatesResolvers.mytlschallenge.acme.httpChallenge]
-    entryPoint = "web"
-
-# Redirect to https
-[http.middlewares]
-  [http.middlewares.https-redirect.redirectscheme]
-    scheme = "https"
-    permanent = true
-    port = 443
+  [certificatesResolvers.mydnschallenge.acme.dnsChallenge]
+    provider = "${PROVIDER}"
+    delayBeforeCheck = 0
 
 ################################################################
 # Traefik logs configuration
@@ -69,3 +63,13 @@
   swarmMode = true
   exposedByDefault = false
   endpoint = "unix:///var/run/docker.sock"
+
+################################################################
+# Traefik Pilot configuration backend
+################################################################
+[pilot]
+    token = "${PILOT_TOKEN}"
+
+[experimental.plugins.cache]
+  modulename = "github.com/traefik/plugin-simplecache"
+  version = "v0.2.1"

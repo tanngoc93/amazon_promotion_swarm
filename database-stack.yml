@@ -11,7 +11,7 @@ services:
     command: redis-server --appendonly yes
     volumes:
       - "/volumes/redis.data:/data"
-      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
     networks:
       - db_network
     deploy:
@@ -33,7 +33,7 @@ services:
   memcached:
     image: memcached:1.6.3
     volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
     networks:
       - db_network
     deploy:

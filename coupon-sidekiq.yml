@@ -1,10 +1,6 @@
 version: "3.8"
 
 networks:
-  private_network:
-    driver: overlay
-    attachable: true
-
   public_network:
     driver: overlay
     external: true
@@ -17,21 +13,20 @@ services:
   sidekiq:
     image: tanngoc93/com.thedogpaws.coupon:latest
     volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
     environment:
-      DB_POOL: "${RAILS_DB_POOL}"
-      DB_PORT: "${RAILS_DB_PORT}"
-      DB_HOST: "${RAILS_DB_HOST}"
-      DB_USER: "${RAILS_DB_USER}"
+      DB_POOL:     "${RAILS_DB_POOL}"
+      DB_PORT:     "${RAILS_DB_PORT}"
+      DB_HOST:     "${RAILS_DB_HOST}"
+      DB_USER:     "${RAILS_DB_USER}"
       DB_PASSWORD: "${RAILS_DB_PASSWORD}"
       DB_FOR_PROD: "${RAILS_DB_PROD}"
-      REDIS_HOST: "${REDIS_HOST}"
-      RAILS_ENV: "${RAILS_ENV}"
-      RACK_ENV: "${RACK_ENV}"
-      PLATFORM: "${SIDEKIQ_PLATFORM}"
-      PORT: "${PORT}"
+      REDIS_HOST:  "${REDIS_HOST}"
+      RAILS_ENV:   "${RAILS_ENV}"
+      RACK_ENV:    "${RACK_ENV}"
+      PLATFORM:    "${SIDEKIQ_PLATFORM}"
+      PORT:        "${PORT}"
     networks:
-      - private_network
       - public_network
       - db_network
     depends_on:
