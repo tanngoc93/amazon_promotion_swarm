@@ -1,7 +1,7 @@
 version: "3.8"
 
 networks:
-  public_network:
+  traefik-network:
     driver: overlay
     external: true
 
@@ -12,17 +12,17 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     environment:
-      PREFIX:                  "${PREFIX}"
-      SITE_NAME:               "${SITE_NAME}"
-      SITE_LOGO:               "${SITE_LOGO}"
-      SITE_FAVICON:            "${SITE_FAVICON}"
-      SITE_FEATURE_IMAGE:      "${SITE_FEATURE_IMAGE}"
-      COUPON_PAGE_DESCRIPTION: "${COUPON_PAGE_DESCRIPTION}"
-      COUPON_PAGE_TITLE:       "${COUPON_PAGE_TITLE}"
-      COUPON_API:              "${COUPON_API}"
-      BLOG_API:                "${BLOG_API}"
+      PREFIX:                  ""
+      SITE_NAME:               ""
+      SITE_LOGO:               ""
+      SITE_FAVICON:            ""
+      SITE_FEATURE_IMAGE:      ""
+      COUPON_PAGE_DESCRIPTION: ""
+      COUPON_PAGE_TITLE:       ""
+      COUPON_API:              ""
+      BLOG_API:                ""
     networks:
-      - public_network
+      - traefik-network
     depends_on:
       - backend
     deploy:
@@ -35,21 +35,21 @@ services:
       replicas: 1
       labels:
         - "traefik.enable=true"
-        - "traefik.docker.network=public_network"
+        - "traefik.docker.network=traefik-network"
         - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
         - "traefik.http.middlewares.stripprefix-middleware.stripprefix.prefixes=/coupons"
         #
         - "traefik.http.routers.frontend.rule=Host(`${DOMAIN}`) && PathPrefix(`/coupons`)"
         - "traefik.http.routers.frontend.entrypoints=web"
-        - "traefik.http.routers.frontend.middlewares=stripprefix-middleware@docker"
         - "traefik.http.routers.frontend.middlewares=redirect-to-https@docker"
+        - "traefik.http.routers.frontend.middlewares=stripprefix-middleware@docker"
         # 
         - "traefik.http.services.frontend-svc.loadbalancer.server.port=80"
         # 
         - "traefik.http.routers.frontend-secured.rule=Host(`${DOMAIN}`) && PathPrefix(`/coupons`)"
         - "traefik.http.routers.frontend-secured.entrypoints=websecured"
         - "traefik.http.routers.frontend-secured.tls=true"
-        - "traefik.http.routers.frontend-secured.tls.certresolver=mydnschallenge"
+        - "traefik.http.routers.frontend-secured.tls.certresolver=myhttpchallenge"
         - "traefik.http.routers.frontend-secured.middlewares=stripprefix-middleware@docker"
       update_config:
         parallelism: 1

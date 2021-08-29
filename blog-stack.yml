@@ -1,29 +1,29 @@
 version: "3.8"
 
 networks:
-  public_network:
+  traefik-network:
     driver: overlay
     external: true
 
-  db_network:
+  db-network:
     driver: overlay
     external: true
 
 services:
   wordpress:
-    image: tanngoc93/wordpress:5.4-php7.4-apache
+    image: tanngoc93/wordpress:5.8.0-php7.4-apache
     volumes:
-      - "/volumes/com.thedogpaws/localhost/html:/var/www/html"
+      - "/root/volumes/web/localhost/html:/var/www/html"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     environment:
       WORDPRESS_DB_HOST:      "${WORDPRESS_DB_HOST}"
       WORDPRESS_DB_USER:      "${WORDPRESS_DB_USER}"
-      WORDPRESS_DB_PASSWORD:  "${WORDPRESS_DB_PASSWORD}"
       WORDPRESS_DB_NAME:      "${WORDPRESS_DB_NAME}"
-      WORDPRESS_TABLE_PREFIX: "${WORDPRESS_TABLE_PREFIX}"
+      WORDPRESS_DB_PASSWORD:  "${WORDPRESS_DB_PASSWORD}"
+      WORDPRESS_TABLE_PREFIX: "${WORDPRESS_TB_PREFIX}"
     networks:
-      - db_network
-      - public_network
+      - db-network
+      - traefik-network
     deploy:
       mode: replicated
       replicas: 1
@@ -32,19 +32,19 @@ services:
           - node.role == manager
       labels:
         - "traefik.enable=true"
-        - "traefik.docker.network=public_network"
+        - "traefik.docker.network=traefik-network"
         - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
         # 
-        - "traefik.http.routers.wordpress.rule=Host(`${DOMAIN}`, `www.${DOMAIN}`)"
+        - "traefik.http.routers.wordpress.rule=Host(`${DOMAIN}`)"
         - "traefik.http.routers.wordpress.entrypoints=web"
         - "traefik.http.routers.wordpress.middlewares=redirect-to-https@docker"
         # 
         - "traefik.http.services.wordpress-svc.loadbalancer.server.port=80"
         # 
-        - "traefik.http.routers.wordpress-secured.rule=Host(`${DOMAIN}`, `www.${DOMAIN}`)"
+        - "traefik.http.routers.wordpress-secured.rule=Host(`${DOMAIN}`)"
         - "traefik.http.routers.wordpress-secured.entrypoints=websecured"
         - "traefik.http.routers.wordpress-secured.tls=true"
-        - "traefik.http.routers.wordpress-secured.tls.certresolver=mydnschallenge"
+        - "traefik.http.routers.wordpress-secured.tls.certresolver=myhttpchallenge"
       update_config:
         parallelism: 1
         delay: 10s

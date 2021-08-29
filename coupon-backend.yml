@@ -1,11 +1,11 @@
 version: "3.8"
 
 networks:
-  public_network:
+  traefik-network:
     driver: overlay
     external: true
 
-  db_network:
+  db-network:
     driver: overlay
     external: true
 
@@ -15,6 +15,7 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     environment:
+      DB_POOL:     ""
       DB_PORT:     "${RAILS_DB_PORT}"
       DB_HOST:     "${RAILS_DB_HOST}"
       DB_USER:     "${RAILS_DB_USER}"
@@ -26,8 +27,8 @@ services:
       PLATFORM:    "${RAILS_PLATFORM}"
       PORT:        "${PORT}"
     networks:
-      - public_network
-      - db_network
+      - traefik-network
+      - db-network
     depends_on:
       - redis
       - sidekiq
@@ -36,19 +37,19 @@ services:
       replicas: 1
       labels:
         - "traefik.enable=true"
-        - "traefik.docker.network=public_network"
+        - "traefik.docker.network=traefik-network"
         - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
-        #
-        - "traefik.http.routers.backend.rule=Host(`coupon.${DOMAIN}`)"
+        # 
+        - "traefik.http.routers.backend.rule=Host(`couponapi.${DOMAIN}`)"
         - "traefik.http.routers.backend.entrypoints=web"
         - "traefik.http.routers.backend.middlewares=redirect-to-https@docker"
         # 
         - "traefik.http.services.backend-svc.loadbalancer.server.port=80"
         # 
-        - "traefik.http.routers.backend-secured.rule=Host(`coupon.${DOMAIN}`)"
+        - "traefik.http.routers.backend-secured.rule=Host(`couponapi.${DOMAIN}`)"
         - "traefik.http.routers.backend-secured.entrypoints=websecured"
         - "traefik.http.routers.backend-secured.tls=true"
-        - "traefik.http.routers.backend-secured.tls.certresolver=mydnschallenge"
+        - "traefik.http.routers.backend-secured.tls.certresolver=myhttpchallenge"
       update_config:
         parallelism: 1
         delay: 10s

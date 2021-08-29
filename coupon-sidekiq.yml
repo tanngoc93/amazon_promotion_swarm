@@ -1,11 +1,11 @@
 version: "3.8"
 
 networks:
-  public_network:
+  traefik-network:
     driver: overlay
     external: true
 
-  db_network:
+  db-network:
     driver: overlay
     external: true
 
@@ -15,7 +15,7 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     environment:
-      DB_POOL:     "${RAILS_DB_POOL}"
+      DB_POOL:     ""
       DB_PORT:     "${RAILS_DB_PORT}"
       DB_HOST:     "${RAILS_DB_HOST}"
       DB_USER:     "${RAILS_DB_USER}"
@@ -24,11 +24,11 @@ services:
       REDIS_HOST:  "${REDIS_HOST}"
       RAILS_ENV:   "${RAILS_ENV}"
       RACK_ENV:    "${RACK_ENV}"
-      PLATFORM:    "${SIDEKIQ_PLATFORM}"
+      PLATFORM:    "${RAILS_PLATFORM}"
       PORT:        "${PORT}"
     networks:
-      - public_network
-      - db_network
+      - traefik-network
+      - db-network
     depends_on:
       - redis
     deploy:

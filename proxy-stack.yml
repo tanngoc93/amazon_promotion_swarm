@@ -1,19 +1,21 @@
 version: "3.8"
 
+# docker swarm join --token SWMTKN-1-48gel4pjh8gh6a3viizmzy36dzao9thfr4m7l6eygeuhr3orfe-4mps4bpjfn2j9bjz75lf29v2t 167.71.99.85:2377
+
 networks:
-  public_network:
+  traefik-network:
     driver: overlay
     external: true
 
 services:
   traefik:
-    image: traefik:v2.3.7
+    image: traefik:v2.4.9
     volumes:
-      - "/volumes/traefik/letsencrypt:/letsencrypt"
-      - "/volumes/traefik/traefik.toml:/etc/traefik/traefik.toml"
+      - "/root/volumes/traefik/letsencrypt:/letsencrypt"
+      - "/root/volumes/traefik/traefik.toml:/etc/traefik/traefik.toml"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     networks:
-      - public_network
+      - traefik-network
     ports:
       - target: 80
         published: 80
@@ -23,12 +25,6 @@ services:
         published: 443
         protocol: tcp
         mode: host
-    environment:
-      - "EMAIL=${EMAIL}"
-      - "PILOT_TOKEN=${PILOT_TOKEN}"
-      - "CF_API_EMAIL=${CF_API_EMAIL}"
-      - "CF_API_KEY=${CF_API_KEY}"
-      - "PROVIDER=${PROVIDER}"
     deploy:
       mode: global
       placement:
@@ -36,7 +32,7 @@ services:
           - node.role == manager
       labels:
         - "traefik.enable=true"
-        - "traefik.docker.network=public_network"
+        - "traefik.docker.network=traefik-network"
         - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
         #
         - "traefik.http.routers.proxy.rule=Host(`traefik.${DOMAIN}`)"
@@ -49,10 +45,7 @@ services:
         - "traefik.http.routers.proxy-secured.entrypoints=websecured"
         - "traefik.http.routers.proxy-secured.service=api@internal"
         - "traefik.http.routers.proxy-secured.tls=true"
-        - "traefik.http.routers.proxy-secured.tls.certresolver=mydnschallenge"
-        #
-        - "traefik.http.routers.proxy-https.middlewares=auth"
-        - "traefik.http.middlewares.auth.basicauth.users=deployer:$$apr1$$aq9QxmNl$$oHp76FRNe4Z0WWR67oKHQ1"
+        - "traefik.http.routers.proxy-secured.tls.certresolver=myhttpchallenge"
       update_config:
         parallelism: 1
         delay: 10s

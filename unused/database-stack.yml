@@ -1,0 +1,29 @@
+version: "3.8"
+
+networks:
+  db-network:
+    driver: overlay
+    external: true
+
+services:
+  memcached:
+    image: memcached:1.6.3
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    networks:
+      - db-network
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 64M
+      mode: replicated
+      replicas: 1
+      labels:
+        - "traefik.enable=false"
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: any
