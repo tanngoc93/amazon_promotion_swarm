@@ -1,7 +1,5 @@
 version: "3.8"
 
-# docker swarm join --token SWMTKN-1-48gel4pjh8gh6a3viizmzy36dzao9thfr4m7l6eygeuhr3orfe-4mps4bpjfn2j9bjz75lf29v2t 167.71.99.85:2377
-
 networks:
   traefik-network:
     driver: overlay

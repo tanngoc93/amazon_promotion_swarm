@@ -12,10 +12,10 @@ services:
       - "/root/volumes/mariadb/data:/var/lib/mysql"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     environment:
-      MYSQL_ROOT_PASSWORD: ""
-      MYSQL_PASSWORD:      ""
-      MYSQL_DATABASE:      ""
-      MYSQL_USER:          ""
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+      MYSQL_PASSWORD:      "${MYSQL_PASSWORD}"
+      MYSQL_DATABASE:      "${MYSQL_DATABASE}"
+      MYSQL_USER:          "${MYSQL_USER}"
     networks:
       - db-network
     deploy:
