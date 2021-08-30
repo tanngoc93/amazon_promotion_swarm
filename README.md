@@ -1,4 +1,4 @@
-## Docker Swarm Management for TheDogPaws.com
+## Docker Swarm Management for TooCoolCats.com/Coupons
 
 ### Deploy a stack
 
